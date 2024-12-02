@@ -1,0 +1,114 @@
+/* General Reset */
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f9f9f9;
+    color: #333;
+}
+
+/* Form Container */
+.form-container {
+    width: 80%;
+    max-width: 800px;
+    margin: 40px auto;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    overflow: hidden;
+}
+
+.form-container h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #444;
+}
+
+/* Buttons */
+.btn {
+    display: inline-block;
+    padding: 10px 20px;
+    margin-top: 15px;
+    font-size: 14px;
+    font-weight: bold;
+    color: #fff;
+    background-color: #007bff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    text-decoration: none;
+    text-align: center;
+}
+
+.btn:hover {
+    background-color: #0056b3;
+}
+
+/* Table Styles */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 16px;
+}
+
+table th, table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+table th {
+    background-color: #007bff;
+    color: white;
+    text-transform: uppercase;
+}
+
+table tbody tr:hover {
+    background-color: #f1f1f1;
+}
+
+/* Form Styles */
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+form label {
+    font-weight: bold;
+    color: #555;
+}
+
+form input[type="text"], 
+form input[type="number"],
+form select, 
+form textarea {
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+form input:focus, 
+form select:focus, 
+form textarea:focus {
+    border-color: #007bff;
+    outline: none;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+/* Delete Button */
+.delete-btn {
+    color: #dc3545;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.delete-btn:hover {
+    color: #a71d2a;
+    text-decoration: underline;
+}
