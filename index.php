@@ -23,6 +23,7 @@ if (!isset($_SESSION['user_role']) || $_SESSION['user_role'] != 'admin') {
                     <li><a href="pacientes/view.php">Pacientes</a></li>
                     <li><a href="tratamientos/tratamientos.php">Tratamientos</a></li>
                     <li><a href="medicos/medicos.php">Doctores</a></li>
+                    <li><a href="cajas/cajas.php">Cajas</a></li>
                     <li><a href="bd/destroy.php" class="logout-btn">Cerrar Sesión</a></li>
                 </ul>
             </nav>
