@@ -1,39 +1,38 @@
 <?php
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $expediente = $_POST['expediente'] ?? '';
-    $nombre = $_POST['nombre'] ?? 0;
-    $total = $_POST['total'] ?? 0;
-    $abono = $_POST['abono'] ?? 0;
-    $tipo_pago = $_POST['tipo_pago'] ?? '';
-    $comentarios = $_POST['comentarios'] ?? '';
+  $expediente = $_POST['expediente'] ?? '';
+  $nombre = $_POST['nombre'] ?? 0;
+  $total = $_POST['total'] ?? 0;
+  $abono = $_POST['abono'] ?? 0;
+  $tipo_pago = $_POST['tipo_pago'] ?? '';
+  $comentarios = $_POST['comentarios'] ?? '';
 
-    // Validación básica.
-    if (empty($expediente) || empty($nombre) || empty($total) || empty($tipo_pago)) {
-        echo "Por favor, complete todos los campos obligatorios.";
-        exit;
+  // Validación básica.
+  if (empty($expediente) || empty($nombre) || empty($total) || empty($tipo_pago)) {
+    echo "Por favor, complete todos los campos obligatorios.";
+    exit;
+  }
+  //Conexión de la base de datos.
+    $conexion = new mysqli("localhost", "root", "", "control_medico");
+    if ($conexion->connect_error) {
+        die("Error de conexión: " . $conexion->connect_error);
     }
-    //Conexión de la base de datos.
-        $conexion = new mysqli("localhost", "root", "", "control_medico");
-        if ($conexion->connect_error) {
-            die("Error de conexión: " . $conexion->connect_error);
-        }
-        $sql = "INSERT INTO cajas VALUES ('$expediente','$nombre','$total','$abono','$tipo_pago','$comentarios')";
-        if ($conexion->query($sql) === TRUE) {
-            echo "<h1>Pago procesado exitosamente</h1>";
-            echo "<p><strong>Expediente:</strong> $expediente</p>";
-            echo "<p><strong>Nombre:</strong> $nombre</p>";
-            echo "<p><strong>Total:</strong> $total</p>";
-            echo "<p><strong>Abono:</strong> $abono</p>";
-            echo "<p><strong>Tipo de Pago:</strong> $tipo_pago</p>";
-            echo "<p><strong>Comentarios:</strong> " . htmlspecialchars($comentarios) . "</p>";
-        } else {
-            echo "Error: " . $conexion->error;
-        }
-        $conexion->close();
-    //Fin de la conexión de la base de datos.
-    //Procesar el pago (lógica de negocio).
-} else {
-    echo "Método de solicitud no válido.";
+    $sql = "INSERT INTO cajas VALUES ('$expediente','$nombre','$total','$abono','$tipo_pago','$comentarios')";
+    if ($conexion->query($sql) === TRUE) {
+      echo "<h1>Pago procesado exitosamente</h1>";
+      echo "<p><strong>Expediente:</strong> $expediente</p>";
+      echo "<p><strong>Nombre:</strong> $nombre</p>";
+      echo "<p><strong>Total:</strong> $total</p>";
+      echo "<p><strong>Abono:</strong> $abono</p>";
+      echo "<p><strong>Tipo de Pago:</strong> $tipo_pago</p>";
+      echo "<p><strong>Comentarios:</strong> " . htmlspecialchars($comentarios) . "</p>";
+    } else {
+      echo "Error: " . $conexion->error;
+    }
+
+    $conexion->close();
+  //Fin de la conexión de la base de datos.
+  //Procesar el pago (lógica de negocio).
 }
 ?>
 <!DOCTYPE html>
@@ -43,6 +42,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Área de Cajas - Formulario</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
+    <!-- Cargar jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Cargar JS de select2 -->
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
 </head>
 <body>
   <div class="container rows">
@@ -51,18 +55,35 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       <form action="" method="POST" class="needs-validation" novalidate>
           <div class="col-mb-3">
             <label for="expediente" class="form-label"># de expediente</label>
-            <input type="text" class="form-control" id="expediente" name="expediente" placeholder="Ingrese el expediente del cliente" required>
+            <?php
+              $conexion=mysqli_connect("localhost", "root", "", "control_medico");
+              $consulta_select=$conexion->query("SELECT * FROM pacientes");
+            ?>
+            <select id="miSelect" name="expediente" class="form-control" onchange="actualizarNombrePaciente()">
+              <option value="">Selecciona...</option>
+              <?php
+              while ($resultado=$consulta_select->fetch_array()){
+                $consulta_select2=$conexion->query("SELECT nombre_paciente FROM pacientes WHERE numero_expediente='".$resultado['numero_expediente']."'");
+                $resultado_nombre=$consulta_select2->fetch_array();
+                echo "<option>".$resultado['numero_expediente']."-".$resultado_nombre['nombre_paciente']."-";
+                $consulta_select3=$conexion->query("SELECT * FROM tratamientos WHERE numero_expediente='".$resultado['numero_expediente']."'");
+                $resultado_costo_total=$consulta_select3->fetch_array();
+                echo $resultado_costo_total['costo_total']."</option>";
+                //echo "<label id='label_costo' style='display: none;'>".$resultado_costo_total['costo_total']."</label>";
+              }
+              ?>
+            </select>
             <div class="invalid-feedback">Por favor, ingrese el # de expediente.</div>
           </div>
           <!--Pendiente de ajustar en PHP-->
           <div class="col-mb-3">
             <label for="nombre" class="form-label">Nombre</label>
-            <input type="text" class="form-control" id="nombre" name="nombre" placeholder="Ingrese el nombre del cliente" required>
+            <input type="text" class="form-control" id="miSelectnombre" name="miSelectnombre"  placeholder="Nombre del paciente" required disabled>
             <div class="invalid-feedback">Por favor, ingrese el nombre.</div>
           </div>
           <div class="col-mb-3">
             <label for="total" class="form-label">Monto total a Pagar</label>
-            <input type="number" class="form-control" id="total" name="total" step="0.01" placeholder="Ingrese el total" required>
+            <input type="number" class="form-control" id="total" name="total" step="0.01" placeholder="Ingrese el total" required disabled>
             <div class="invalid-feedback">Por favor, ingrese el monto total a pagar.</div>
           </div>
           <!--Fin del pendiente de ajustar en PHP-->
@@ -105,6 +126,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }, false);
       });
     })();
+    $(document).ready(function(){
+      $('#miSelect').select2({});
+      $('#miSelectnombre').select2({});
+    });
+  function actualizarNombrePaciente(){
+    var nombrePacienteInput = document.getElementById('miSelectnombre');
+    var costo_total = document.getElementById('total');
+    var valor = $('#miSelect').val();  // Obtén el valor del input
+    var partes = valor.split('-');
+    nombrePacienteInput.value=partes[1];
+    //costo_total.value=$('#label_costo').text();
+    costo_total.value=partes[2];
+  }
   </script>
 </body>
 </html>
